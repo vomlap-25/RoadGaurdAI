@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a43">
+  <title>RoadGuard AI · Inspection Review</title>
+  <link rel="stylesheet" href="/static/dashboard.css">
+  <script src="/static/dashboard.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/dashboard" aria-label="RoadGuard AI dashboard home">
+      <span class="brand-mark" aria-hidden="true">R</span>
+      <span><strong>RoadGuard AI</strong><small>Road inspection console</small></span>
+    </a>
+    <div class="topbar-right"><span class="api-status"><span class="status-dot"></span><span id="api-status">Connecting to API</span></span><button class="button button-light" id="refresh-button" type="button">↻ Refresh</button></div>
+  </header>
+  <main class="shell">
+    <section class="page-heading">
+      <div><p class="eyebrow">OPERATIONS / REVIEW QUEUE</p><h1>Road damage inspections</h1><p class="subheading">Review prioritized findings, inspect evidence, and record a human decision.</p></div>
+      <div class="queue-summary"><span class="summary-label">VISIBLE FINDINGS</span><strong id="visible-count">—</strong><span id="updated-at">Waiting for data</span></div>
+    </section>
+    <section class="metrics" aria-label="Review queue summary">
+      <article class="metric-card"><span class="metric-label">Needs review</span><strong id="metric-pending">—</strong><span class="metric-note">Open decisions</span></article>
+      <article class="metric-card"><span class="metric-label">High severity</span><strong id="metric-high">—</strong><span class="metric-note">Priority attention</span></article>
+      <article class="metric-card"><span class="metric-label">Approved</span><strong id="metric-approved">—</strong><span class="metric-note">Human confirmed</span></article>
+      <article class="metric-card"><span class="metric-label">Rejected</span><strong id="metric-rejected">—</strong><span class="metric-note">Human declined</span></article>
+    </section>
+    <section class="toolbar" aria-label="Queue filters">
+      <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search damage type, ID, GPS…" autocomplete="off"></label>
+      <label class="filter-label" for="status-filter">Status</label>
+      <select id="status-filter"><option value="all">All statuses</option><option value="human_review_required">Needs human review</option><option value="prioritized">Prioritized</option><option value="pending_decision">Pending decision</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+      <span class="sort-note">Ranked by priority score ↓</span>
+    </section>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <section id="loading-state" class="state-card"><span class="spinner" aria-hidden="true"></span><strong>Loading inspection records</strong><p>Connecting to the RoadGuard API…</p></section>
+    <section id="error-state" class="state-card error-state" hidden><div class="state-icon">!</div><strong>Could not load the review queue</strong><p id="error-message">The API did not return records.</p><button class="button button-primary" id="retry-button" type="button">Try again</button></section>
+    <section id="empty-state" class="state-card" hidden><div class="state-icon">✓</div><strong id="empty-title">No inspection records yet</strong><p id="empty-message">Upload a road video through the API to create real inspection records.</p><a class="text-link" href="/docs">Open API documentation ↗</a></section>
+    <section id="records-list" class="records-list" aria-label="Ranked road-damage locations" hidden></section>
+    <footer class="page-footer"><span>RoadGuard AI · Human-in-the-loop review</span><span>Local SQLite API · Evidence served from configured storage</span></footer>
+  </main>
+
+  <div id="detail-backdrop" class="backdrop" hidden></div>
+  <aside id="detail-panel" class="detail-panel" aria-labelledby="detail-title" aria-modal="true" role="dialog" hidden>
+    <div class="detail-header"><div><p class="eyebrow">FINDING DETAILS</p><h2 id="detail-title">Road damage</h2><p id="detail-id" class="mono"></p></div><button id="close-detail" class="icon-button" type="button" aria-label="Close details">×</button></div>
+    <div id="detail-content" class="detail-content"><p class="muted">Select a finding to view evidence and decision trace.</p></div>
+    <div id="review-controls" class="review-controls" hidden>
+      <label for="reviewer-input">Reviewer <span class="optional">(optional)</span></label><input id="reviewer-input" maxlength="120" placeholder="Your name or operator ID">
+      <label for="review-notes">Review notes <span class="optional">(optional)</span></label><textarea id="review-notes" maxlength="2000" rows="3" placeholder="Add a short reason or field verification note"></textarea>
+      <div class="review-buttons"><button id="reject-button" class="button button-danger" type="button">Reject finding</button><button id="approve-button" class="button button-primary" type="button">Approve finding</button></div>
+      <p class="review-hint">Your decision is saved to the API and appended to the audit trace.</p>
+    </div>
+  </aside>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
