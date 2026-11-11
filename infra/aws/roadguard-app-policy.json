@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EvidenceObjectsOnly",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Resource": "arn:aws:s3:::REPLACE_WITH_EVIDENCE_BUCKET/evidence/*"
+    },
+    {
+      "Sid": "RoadGuardTableItemsAndQueries",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeTable", "dynamodb:GetItem", "dynamodb:PutItem",
+        "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:BatchWriteItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:REPLACE_WITH_REGION:REPLACE_WITH_ACCOUNT_ID:table/REPLACE_WITH_TABLE",
+        "arn:aws:dynamodb:REPLACE_WITH_REGION:REPLACE_WITH_ACCOUNT_ID:table/REPLACE_WITH_TABLE/index/*"
+      ]
+    },
+    {
+      "Sid": "WriteOnlyToPrecreatedCloudWatchLogGroup",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": "arn:aws:logs:REPLACE_WITH_REGION:REPLACE_WITH_ACCOUNT_ID:log-group:/roadguard/app:log-stream:*"
+    }
+  ]
+}
